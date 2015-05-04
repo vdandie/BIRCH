@@ -18,9 +18,10 @@ public class BIRCH {
    * Cluster Feature
    */
   class ClusterFeature {
-
+    
     private ClusterFeature parent;
-    private final ArrayList<int[]> children = new ArrayList<>();
+    private ArrayList<ClusterFeature> children = new ArrayList<>();
+    private final ArrayList<int[]> records = new ArrayList<>();
     private int b; // Max Number of Children
 
     ClusterFeature() {
@@ -36,8 +37,8 @@ public class BIRCH {
      * @param record -> Record to add.
      * @return -> true if Record can be added, false if not.
      */
-    public boolean add(int[] record) {
-      return true;
+    public void add(int[] record) {
+      records.add(record);
     }
 
     /**
@@ -46,6 +47,19 @@ public class BIRCH {
      */
     public void set_parent(ClusterFeature parent) {
       this.parent = parent;
+    }
+    
+    public void set_children(ArrayList<ClusterFeature> children) {
+      this.children = children;
+    }
+    
+    public void add_child(ClusterFeature child) {
+      if(children == null) {
+        children = new ArrayList<>();
+        children.add(child);
+      } else {
+        children.add(child);
+      }
     }
     
     /**
@@ -59,9 +73,13 @@ public class BIRCH {
     public ClusterFeature get_parent() {
       return parent;
     }
-
+    
     public ArrayList get_children() {
       return children;
+    }
+
+    public ArrayList get_records() {
+      return records;
     }
 
     public int get_b() {
@@ -76,6 +94,7 @@ public class BIRCH {
       int n = get_n();
       int[] ls = get_LS();
       int[] ss = get_SS();
+      if(n == 0) return new double[] {-1};
       for (int i = 0; i < radius.length; i++) {
 //        //Test Variables
 //        // n * SS
@@ -113,7 +132,7 @@ public class BIRCH {
      * @return -> The number of objects in a cluster.
      */
     public int get_n() {
-      return children.size();
+      return records.size();
     }
 
     /**
@@ -122,9 +141,9 @@ public class BIRCH {
      */
     public int[] get_LS() {
       int[] sum = new int[7];
-      children.stream().forEach((child) -> {
+      records.stream().forEach((record) -> {
         for (int i = 0; i < sum.length; i++) {
-          sum[i] += child[i];
+          sum[i] += record[i];
         }
       });
       return sum;
@@ -136,12 +155,25 @@ public class BIRCH {
      */
     public int[] get_SS() {
       int[] sum = new int[7];
-      children.stream().forEach((child) -> {
+      records.stream().forEach((record) -> {
         for (int i = 0; i < sum.length; i++) {
-          sum[i] += child[i] * child[i];
+          sum[i] += record[i] * record[i];
         }
       });
       return sum;
+    }
+    
+    public String to_string() {
+      String str = "< " + get_n() + ", ( ";
+      for(int ls : get_LS()) {
+        str += ls + " ";
+      }
+      str += "), ( ";
+      for(int ss : get_SS()) {
+        str += ss + " ";
+      }
+      str += ") >";
+      return str;
     }
   }
 
@@ -149,12 +181,28 @@ public class BIRCH {
    * Cluster Feature Tree
    */
   class CFTree {
-
+    
+    ClusterFeature root;
     int B; // Branch factor
     int T; // Threshold
-
-    void insert() {
-
+    
+    CFTree() {
+      root = null;
+    }
+    
+    public void insert(int[] record) {
+      if (root == null) {
+        root = new ClusterFeature(B);
+        insert(root, record);
+      } else {
+        insert(root, record);
+      }
+    }
+    
+    private void insert(ClusterFeature cf, int[] record) {
+      if(cf.children == null && cf.records == null) {
+        
+      }
     }
   }
 
