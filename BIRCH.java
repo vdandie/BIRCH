@@ -33,39 +33,45 @@ public class BIRCH {
 
     /**
      * Attempts to add a record to the CF node.
-     *
      * @param record -> Record to add.
      * @return -> true if Record can be added, false if not.
      */
-    boolean add(int[] record) {
+    public boolean add(int[] record) {
       return true;
     }
 
     /**
-     * Sets the parent of the CF node;
-     *
+     * Sets the parent of the CF node.
      * @param parent -> Parent to set to.
      */
-    void set_parent(ClusterFeature parent) {
+    public void set_parent(ClusterFeature parent) {
       this.parent = parent;
     }
+    
+    /**
+     * Sets the maximum number of branches allowed in the CF.
+     * @param b -> Number of branches allowed.
+     */
+    public void set_b(int b) {
+      this.b = b;
+    }
 
-    ClusterFeature get_parent() {
+    public ClusterFeature get_parent() {
       return parent;
     }
 
-    ArrayList get_children() {
+    public ArrayList get_children() {
       return children;
     }
 
-    int get_b() {
+    public int get_b() {
       return b;
     }
 
     /**
      * @return -> The radius of the CF.
      */
-    double[] get_r() {
+    public double[] get_r() {
       double[] radius = new double[7];
       int n = get_n();
       int[] ls = get_LS();
@@ -86,14 +92,27 @@ public class BIRCH {
 //        double sqRt = Math.sqrt(frac);
         radius[i] = Math.sqrt(((n * ss[i]) - (2 * (ls[i] * ls[i])) + (n * ls[i])) / (n * n));
       }
-
       return radius;
+    }
+    
+    /**
+     * @return -> The diameter of the CF. 
+     */
+    public double[] get_d() {
+      double[] diameter = new double[7];
+      int n = get_n();
+      int[] ls = get_LS();
+      int[] ss = get_SS();
+      for(int i = 0; i < diameter.length; i++) {
+        diameter[i]= Math.sqrt(((2 * ss[i]) - (2 * (ls[i] * ls[i]))) / (n * (n - 1)));
+      }
+      return diameter;
     }
 
     /**
      * @return -> The number of objects in a cluster.
      */
-    int get_n() {
+    public int get_n() {
       return children.size();
     }
 
@@ -101,7 +120,7 @@ public class BIRCH {
      * @return -> The sum of the attributes of the objects inside of the
      * cluster.
      */
-    int[] get_LS() {
+    public int[] get_LS() {
       int[] sum = new int[7];
       children.stream().forEach((child) -> {
         for (int i = 0; i < sum.length; i++) {
@@ -115,7 +134,7 @@ public class BIRCH {
      * @return -> The square sum of the attributes of the objects inside of the
      * cluster.
      */
-    int[] get_SS() {
+    public int[] get_SS() {
       int[] sum = new int[7];
       children.stream().forEach((child) -> {
         for (int i = 0; i < sum.length; i++) {
@@ -141,7 +160,6 @@ public class BIRCH {
 
   /**
    * Runs the BIRCH algorithm with...
-   *
    * @param branch_factor -> The maximum number of leaves/branches for a node of
    * the tree.
    * @param threshold -> The maximum diameter for a node of the tree.
